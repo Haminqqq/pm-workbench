@@ -66,19 +66,20 @@ git clone https://github.com/<owner>/pm-workbench.git
 - 背景守望（可選）：雙擊 `teams\run_watch.bat`，每 10 分鐘看一次；`teams\watch_list.txt` 一行一個名字（預設 Yuna、Jaclyn），名單內的人有新訊息就跳 Windows 通知＋草稿進剪貼簿，分析存 `teams\log\`。關掉視窗就停。
 
 ## 3c. CRD 怎麼放（版本管理）
+**不用搬任何東西**，用你現有的專案資料夾：
 ```
-CRD_DIR\                 ← CLAUDE.md 裡的路徑
-  XIO Gen10.3\
-    M1441179_XIO.xlsx     ← 目前版，檔名固定不帶 Rev
-    CHANGELOG.md          ← 每次上架自動記一行
-    old\
-      M1441179_XIO_RevE_20261113.xlsx   ← 舊版自動搬進來
-  Xstore Gen10.7\
+OneDrive\桌面\                      ← CLAUDE.md 的 CRD_DIR 指到這層
+  [S21A1]  XIO Gen10.3\
+    M1441179-RevE ....xlsx           ← 目前版 CRD（檔名 M＋7 碼開頭的就算 CRD）
+    其他 FCST、Tracker…              ← 不碰
+    CHANGELOG.md                     ← 第一次上架時自動建
+    old\M1441179-RevE ..._RevE_20261113.xlsx   ← 舊版自動搬進來
+  [S2185]Xstore Gen9.4\
     …
 ```
 - Claude 改完 CRD 會先放在 `CRD\out\<專案>\`，給你摘要。你說 **「上架」**，它才把舊版搬到 `old\`、新檔換上去、CHANGELOG 記一行。原檔永遠不會被直接覆蓋。
 - Excel 還開著那份時會被擋下來，提示你關掉再說一次「上架」。
-- **「CRD 狀態」**：列每個專案目前版的 Rev、時間、有沒有被 Excel 開著、有沒有等著上架的檔。
+- **「CRD 狀態」**：列每個專案的 CRD、Rev、時間、有沒有被 Excel 開著、有沒有等著上架的檔。
 - **「回復」**：把 old\ 裡最新一份換回來。
 - `old\` 太多可以自己刪，不影響任何功能。
 

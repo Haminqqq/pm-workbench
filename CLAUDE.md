@@ -1,10 +1,10 @@
 # PM 工作台（本機）
 
-CRD_DIR = D:\CRD        ← 改成真實路徑；底下每個專案一個子資料夾（XIO Gen10.3、Xstore Gen10.3、Xstore Gen10.7、AMD Gen8.4 …）
+CRD_DIR = C:\Users\11508141\OneDrive - Quanta Computer\桌面        ← 放所有專案資料夾的那一層；專案資料夾用她現有的（[S21A1] XIO Gen10.3、[S2185]Xstore Gen9.4 …），不用搬
 雲端工作台：https://claude.ai/artifact/UfnLZCVTgfNf13vcuTkkT5（待追清單 collection `items`、首頁資料 collection `home`）
 
 ## 資料夾
-- `CRD_DIR/<專案>/`：只放**目前版**（檔名維持她現行命名）；舊版在 `old/<原檔名>_Rev<X>_<日期>.xlsx`；每個專案一個 `CHANGELOG.md`。既有檔案**只讀**，產出先寫 `CRD/out/<專案>/<原檔名>`，她說「上架」才用 `python crd_release.py --publish` 換上去（腳本會先備份舊版）。被 Excel 開著會停，請她關掉再試。「CRD 狀態」＝`crd_release.py --status`；「回復」＝`--rollback`。
+- `CRD_DIR/<專案資料夾>/`：她現有的專案資料夾，裡面檔名 **M＋7 碼開頭的 xlsx 就是 CRD**（FCST、Tracker 等其他檔不碰）。目前版直接放這層；舊版自動進 `old/<原檔名>_Rev<X>_<日期>.xlsx`；`CHANGELOG.md` 也在這層。專案名稱打一部分就行（「XIO Gen10.3」會對到「[S21A1]  XIO Gen10.3」）。既有檔案**只讀**，產出先寫 `CRD/out/<專案>/<原檔名>`，她說「上架」才用 `python crd_release.py --publish` 換上去（腳本會先備份舊版）。被 Excel 開著會停，請她關掉再試。「CRD 狀態」＝`crd_release.py --status`；「回復」＝`--rollback`。
 - `downloads/<日期>/`：信件附件。`teams/`：她貼的 Teams 對話 txt 或截圖，處理完搬到 `teams/done/`。`mail/`：掃信中間檔。`outlook/`：PowerShell 腳本。 `teams/*.ps1`：Teams 通知讀取、截圖、剪貼簿；`teams/shots/` 截圖、`teams/log/` 背景分析。
 - 讀外部檔案用 `python3 -I`。
 

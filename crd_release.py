@@ -6,7 +6,8 @@
   python crd_release.py --publish --project "XIO Gen10.3" --new "CRD/out/XIO Gen10.3/M1441179.xlsx" --rev F --note "FW 合併 MSFT RevF"
   python crd_release.py --rollback --project "XIO Gen10.3"
 
-CRD_DIR 讀 CLAUDE.md 的 `CRD_DIR = ...`，或用 --crd-dir 指定。
+CRD_DIR＝放所有專案資料夾的那一層（例如 OneDrive 桌面），讀 CLAUDE.md 的 `CRD_DIR = ...`，或用 --crd-dir 指定。
+專案資料夾照她現有的（[S21A1] XIO Gen10.3 …），裡面檔名 M＋7 碼開頭的 xlsx 就當 CRD，其他檔不碰。
 原檔絕不直接覆蓋：上架前一定先搬到 old/；被 Excel 開著就停（exit 2），什麼都不動。
 """
 import argparse, datetime as dt, os, re, shutil, sys
@@ -66,9 +67,30 @@ def read_rev(path):
         wb.close()
 
 
+CRD_NAME = re.compile(r"^M\d{7}", re.I)   # CRD 檔名都以 M＋7 碼開頭；專案資料夾裡其他 xlsx（FCST、Tracker…）不算
+
+
 def current_files(proj_dir):
+    """專案資料夾裡的 CRD（只看檔名 M 開頭的 xlsx，不看子資料夾）。"""
     return sorted(f for f in os.listdir(proj_dir)
-                  if f.lower().endswith(XL) and not f.startswith("~$") and os.path.isfile(os.path.join(proj_dir, f)))
+                  if f.lower().endswith(XL) and not f.startswith("~$") and CRD_NAME.match(f)
+                  and os.path.isfile(os.path.join(proj_dir, f)))
+
+
+def doc_of(name):
+    m = CRD_NAME.match(name); return m.group(0).upper() if m else None
+
+
+def find_project(crd_dir, project):
+    """專案資料夾名稱可以只打一部分（例如 'XIO Gen10.3' 對到 '[S21A1]  XIO Gen10.3'）。"""
+    dirs = [d for d in os.listdir(crd_dir) if os.path.isdir(os.path.join(crd_dir, d))]
+    exact = [d for d in dirs if d == project]
+    if exact: return os.path.join(crd_dir, exact[0])
+    key = re.sub(r"\s+", "", project).lower()
+    hit = [d for d in dirs if key in re.sub(r"\s+", "", d).lower()]
+    if len(hit) == 1: return os.path.join(crd_dir, hit[0])
+    if not hit: sys.exit(f"找不到專案資料夾含「{project}」。CRD_DIR 底下有：" + "、".join(dirs))
+    sys.exit(f"「{project}」對到不只一個資料夾：" + "、".join(hit) + "，請打完整名稱。")
 
 
 def fmt_time(path):
@@ -86,6 +108,8 @@ def status(crd_dir):
         files = current_files(pd)
         old = os.path.join(pd, "old")
         nold = len([f for f in os.listdir(old) if f.lower().endswith(XL)]) if os.path.isdir(old) else 0
+        if not files and not nold:
+            continue  # 這個資料夾沒有 CRD（Schedule、2nd source…）
         print(f"\n[{proj}]  舊版 {nold} 份")
         if not files:
             print("  （沒有目前版）")
@@ -93,8 +117,9 @@ def status(crd_dir):
             p = os.path.join(pd, f)
             lock = "  ⚠ Excel 開著" if is_locked(p) else ""
             print(f"  {f}  Rev {read_rev(p)}  {fmt_time(p)}{lock}")
-        if len(files) > 1:
-            print("  ⚠ 不只一份，上架時要用 --name 指定是哪一份")
+        docs=[doc_of(f) for f in files]
+        if len(docs) != len(set(docs)):
+            print("  ⚠ 同一個 CRD 編號有兩份以上，上架前先整理（舊的搬到 old/）")
     outdir = os.path.join(HERE, "CRD", "out")
     pending = []
     if os.path.isdir(outdir):
@@ -125,19 +150,24 @@ def unique(path):
 
 
 def publish(crd_dir, project, new, rev=None, note="", name=None, who="Claude"):
-    pd = os.path.join(crd_dir, project)
-    if not os.path.isdir(pd):
-        sys.exit(f"找不到專案資料夾：{pd}（名稱要跟 CRD_DIR 底下的一樣）")
+    pd = find_project(crd_dir, project)
     if not os.path.isfile(new):
         sys.exit(f"找不到新檔：{new}")
-    target_name = name or os.path.basename(new)
     files = current_files(pd)
+    if name:
+        target_name = name
+    else:
+        same = [f for f in files if doc_of(f) == doc_of(os.path.basename(new))]
+        if len(same) > 1:
+            sys.exit("同一個 CRD 編號有多份：" + "、".join(same) + "，請用 --name 指定要取代哪一份。")
+        target_name = same[0] if same else os.path.basename(new)
     cur = os.path.join(pd, target_name) if target_name in files else None
+    dst_name = os.path.basename(new) if not name else name   # 新檔名若帶新 Rev（RevT→RevU）就用新名字
     if cur is None and files:
-        print("目前版找不到同名檔。專案資料夾裡有：")
+        print(f"專案資料夾裡沒有跟「{os.path.basename(new)}」同編號的 CRD。現有：")
         for f in files:
             print("  " + f)
-        sys.exit("請用 --name 指定要取代哪一份（新檔會改成那個檔名），或確認檔名。")
+        sys.exit("要取代其中一份請加 --name；真的是新 CRD 就加 --name 填新檔名。")
     if cur and is_locked(cur):
         print(f"⚠ 請先關閉 Excel 裡的「{target_name}」，再跑一次。什麼都還沒動。")
         sys.exit(2)
@@ -151,7 +181,7 @@ def publish(crd_dir, project, new, rev=None, note="", name=None, who="Claude"):
         stem, ext = os.path.splitext(target_name)
         moved = unique(os.path.join(old_dir, f"{stem}_Rev{old_rev}_{today}{ext}"))
         shutil.move(cur, moved)
-    dst = os.path.join(pd, target_name)
+    dst = os.path.join(pd, dst_name)
     shutil.copy2(new, dst)
     rev = rev or read_rev(dst)
     line = changelog(pd, f"- {dt.date.today().isoformat()} Rev {rev}｜{note or '（未填說明）'}｜{who}｜舊版→ {os.path.relpath(moved, pd) if moved else '無'}")
@@ -167,7 +197,7 @@ def publish(crd_dir, project, new, rev=None, note="", name=None, who="Claude"):
 
 
 def rollback(crd_dir, project, name=None):
-    pd = os.path.join(crd_dir, project)
+    pd = find_project(crd_dir, project)
     old_dir = os.path.join(pd, "old")
     olds = sorted((f for f in os.listdir(old_dir) if f.lower().endswith(XL)),
                   key=lambda f: os.path.getmtime(os.path.join(old_dir, f))) if os.path.isdir(old_dir) else []
