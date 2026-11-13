@@ -7,6 +7,7 @@ CRD_DIR = C:\Users\11508141\OneDrive - Quanta Computer\桌面        ← 放所�
 - `CRD_DIR/<專案資料夾>/`：她現有的專案資料夾，裡面檔名 **M＋7 碼開頭的 xlsx 就是 CRD**（FCST、Tracker 等其他檔不碰）。目前版直接放這層；舊版自動進 `old/<原檔名>_Rev<X>_<日期>.xlsx`；`CHANGELOG.md` 也在這層。專案名稱打一部分就行（「XIO Gen10.3」會對到「[S21A1]  XIO Gen10.3」）。既有檔案**只讀**，產出先寫 `CRD/out/<專案>/<原檔名>`，她說「上架」才用 `python crd_release.py --publish` 換上去（腳本會先備份舊版）。被 Excel 開著會停，請她關掉再試。「CRD 狀態」＝`crd_release.py --status`；「回復」＝`--rollback`。
 - `downloads/<日期>/`：信件附件。`teams/`：她貼的 Teams 對話 txt 或截圖，處理完搬到 `teams/done/`。`mail/`：掃信中間檔。`outlook/`：PowerShell 腳本。 `teams/*.ps1`：Teams 通知讀取、截圖、剪貼簿；`teams/shots/` 截圖、`teams/log/` 背景分析。
 - 讀外部檔案用 `python3 -I`。
+- 跑指令一律 PowerShell（`powershell -NoProfile -ExecutionPolicy Bypass -File …`）；這台電腦沒有 Git Bash。
 
 ## 流程
 - 掃信 → skill `outlook-local-scan`（讀信用 `outlook/read_mail.ps1`、草稿用 `outlook/make_draft.ps1`、標記用 `outlook/mark_done.ps1`）。固定三段：摘要 → 提問 → 她說「開始」才執行。
@@ -23,4 +24,4 @@ CRD_DIR = C:\Users\11508141\OneDrive - Quanta Computer\桌面        ← 放所�
 - Teams：只放剪貼簿，絕不 SendKeys 貼進 Teams、絕不按 Enter。
 
 ## 更新工具
-她說「更新工具」→ 有 git 就 `git pull`（有本機改動先 `git stash`，pull 完再 `git stash pop`）；沒有 git 就請她到 GitHub Download ZIP 後跑 `update.bat`。這個資料夾的 skill 在 `.claude/skills/`，pull 後自動生效。crd skill 用的 `crd_import.py`、`merge_crd_fw.py` 在根目錄。
+她說「更新工具」→ 用 PowerShell 跑 `& "$env:USERPROFILE\PortableGit\cmd\git.exe" pull`（git **不在 PATH**，一定用完整路徑；有本機改動先 stash 再 pop）。沒有 PortableGit 就請她到 GitHub Download ZIP 後跑 `update.bat`。**不要**用 Bash 工具跑 git，也不要把 PortableGit 加回 PATH：它的 bash.exe 會被公司防毒（Apex One）判為違規。這個資料夾的 skill 在 `.claude/skills/`，pull 後自動生效。crd skill 用的 `crd_import.py`、`merge_crd_fw.py` 在根目錄。

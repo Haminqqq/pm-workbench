@@ -16,7 +16,7 @@ powershell -ExecutionPolicy Bypass -File outlook\test_com.ps1
 ```
 git clone https://github.com/<owner>/pm-workbench.git
 ```
-之後有更新：在資料夾打 `git pull`，或在 `claude` 裡說「更新工具」。
+之後有更新：雙擊 `pull.bat`，或在 `claude`／中台說「更新工具」。
 掃信、看 Teams、查料號、CRD 合併這些 skill 都在 `.claude/skills/`，跟著 pull 一起更新，不用再上傳。
 沒有 git 的話（公司擋安裝檔）：第一次 GitHub 頁面 Code → Download ZIP，解壓到 `C:\Users\<帳號>\pm-workbench`（把裡面那層 `pm-workbench-main` 的內容搬上來）。之後更新：再 Download ZIP 一次（留在「下載」），雙擊資料夾裡的 `update.bat` 就會自動覆蓋。
 
@@ -24,7 +24,7 @@ git clone https://github.com/<owner>/pm-workbench.git
 | 需要 | 下載 | 解壓到 | 加進 PATH |
 |---|---|---|---|
 | Node（跑 Claude Code） | nodejs.org → Windows Standalone Binary (.zip) | `C:\Users\<帳號>\node-vXX` | 那個資料夾 |
-| Git（選用，`git pull` 更新） | git-for-windows releases → PortableGit 7z.exe（擋的話跳過，用 update.bat） | `C:\Users\<帳號>\PortableGit` | `...\PortableGit\cmd` |
+| Git（選用，`git pull` 更新） | git-for-windows releases → PortableGit 7z.exe（擋的話跳過，用 update.bat） | `C:\Users\<帳號>\PortableGit` | **不要加進 PATH**：它的 bash.exe 會被防毒行為監控擋。更新用 `pull.bat`（走完整路徑） |
 | Python（CRD 腳本） | https://www.nuget.org/api/v2/package/python/3.12.10 → 把 .nupkg 改名 .zip | `C:\Users\<帳號>\python` | `...\python\tools` 和 `...\python\tools\Scripts` |
 
 加 PATH 用 `setx PATH "%PATH%;<路徑1>;<路徑2>"`，然後**關掉命令提示字元重開**才生效。
