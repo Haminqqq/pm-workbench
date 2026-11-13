@@ -22,4 +22,4 @@ CRD_DIR = D:\CRD        ← 改成真實路徑；底下每個專案一個子資�
 - Teams：只放剪貼簿，絕不 SendKeys 貼進 Teams、絕不按 Enter。
 
 ## 更新工具
-她說「更新工具」→ `git pull`（有本機改動先 `git stash`，pull 完再 `git stash pop`）。這個資料夾的 skill 在 `.claude/skills/`，pull 後自動生效。crd skill 用的 `crd_import.py`、`merge_crd_fw.py` 在根目錄。
+她說「更新工具」→ 有 git 就 `git pull`（有本機改動先 `git stash`，pull 完再 `git stash pop`）；沒有 git 就請她到 GitHub Download ZIP 後跑 `update.bat`。這個資料夾的 skill 在 `.claude/skills/`，pull 後自動生效。crd skill 用的 `crd_import.py`、`merge_crd_fw.py` 在根目錄。

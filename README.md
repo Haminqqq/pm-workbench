@@ -18,7 +18,7 @@ git clone https://github.com/<owner>/pm-workbench.git
 ```
 之後有更新：在資料夾打 `git pull`，或在 `claude` 裡說「更新工具」。
 掃信、看 Teams、查料號、CRD 合併這些 skill 都在 `.claude/skills/`，跟著 pull 一起更新，不用再上傳。
-沒有 git 的話：GitHub 頁面 Code → Download ZIP，解壓覆蓋（效果一樣）。
+沒有 git 的話（公司擋安裝檔）：第一次 GitHub 頁面 Code → Download ZIP，解壓到 `C:\Users\<帳號>\pm-workbench`（把裡面那層 `pm-workbench-main` 的內容搬上來）。之後更新：再 Download ZIP 一次（留在「下載」），雙擊資料夾裡的 `update.bat` 就會自動覆蓋。
 
 ## 1. 裝 Claude Code（不需要管理員權限）
 1. 下載 Node.js **可攜版 zip**（nodejs.org → Downloads → Windows Binary (.zip)），解壓到例如 `D:\tools\node\`。
