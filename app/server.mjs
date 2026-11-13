@@ -75,7 +75,7 @@ function answer(requestId, body) {
 
 // ---------- Claude 主迴圈 ----------
 let q = null;
-async function ensureAgent() {
+async function ensureAgent(cont) {
   if (q) return;
   const options = {
     cwd: ROOT,
@@ -86,6 +86,7 @@ async function ensureAgent() {
     systemPrompt: { type: "preset", preset: "claude_code", append: CONFIG.systemAppend || "妳在「PM 中台」裡跟她對話：回覆繁體中文、短句；要她決定的事用 AskUserQuestion 問，不要用文字問；每個流程先摘要、再提問、她同意才執行；絕不寄信、不自動貼進 Teams。" },
     env: { ...process.env },
   };
+  if (cont) options.continue = true;               // 接續這個資料夾最近一次對話（終端機或中台都算）
   if (CONFIG.model) options.model = CONFIG.model;
   if (CONFIG.pathToClaudeCodeExecutable) options.pathToClaudeCodeExecutable = CONFIG.pathToClaudeCodeExecutable;
   q = query({ prompt: userStream(), options });
@@ -102,7 +103,7 @@ async function ensureAgent() {
 
 let textBuf = "";
 function handle(m) {
-  if (m.type === "system" && m.subtype === "init") { state.sessionId = m.session_id; emit({ type: "status", running: true, text: `已連線（${m.model}）`, sessionId: m.session_id }); return; }
+  if (m.type === "system" && m.subtype === "init") { state.sessionId = m.session_id; emit({ type: "status", running: true, text: `已連線（${m.model}）`, sessionId: m.session_id, started: true }); return; }
   if (m.type === "stream_event") {
     const ev = m.event;
     if (ev.type === "content_block_delta" && ev.delta?.type === "text_delta") { textBuf += ev.delta.text; emit({ type: "delta", text: ev.delta.text }); }
@@ -144,7 +145,8 @@ const server = http.createServer(async (req, res) => {
     const b = await body(req); const text = String(b.text || "").trim();
     if (!text) return json(res, 400, { error: "empty" });
     if (state.pending) return json(res, 409, { error: "先回答畫面上的問題" });
-    await ensureAgent(); state.running = true; emit({ type: "user", text }); pushUser(text); return json(res, 200, { ok: true });
+    const cont = !!b.continue && !q;
+    await ensureAgent(cont); state.running = true; emit({ type: "user", text: (cont ? "（接續上次對話）" : "") + text }); pushUser(text); return json(res, 200, { ok: true });
   }
   if (url.pathname === "/api/answer" && req.method === "POST") {
     const b = await body(req); return json(res, answer(b.requestId, b) ? 200 : 404, { ok: true });

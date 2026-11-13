@@ -36,6 +36,7 @@ git clone https://github.com/<owner>/pm-workbench.git
 - 左邊按鈕＝每天／CRD／料號／每週的固定任務，按下去就是跟本機 Claude 說那句話；下面輸入框可以直接打字。
 - Claude 要妳決定時會跳綠色卡片（選項＋其他），要跑指令或改檔時跳黃色卡片（允許／這次都允許／拒絕）。右上角可以切「每個動作都問我 / 改檔不用問 / 自動」。
 - 用的是同一個資料夾的 skill 和 CLAUDE.md，規則跟終端機版一樣：先摘要 → 提問 → 妳同意才做；不寄信、不貼 Teams、不覆蓋原檔。
+- 右上角「接續上次對話」：勾起來再按第一顆按鈕，會接上這個資料夾最近一次的 Claude Code 對話（終端機掃到一半也能在中台繼續）。中台連上後這個勾會消失，到下次重開才會再出現。
 - 紀錄在 `app\log\<日期>.jsonl`。只綁 127.0.0.1，別台電腦連不到。
 - 進階：`app\config.json` 可改預設權限模式、不用問的工具清單、模型；SDK 自帶的 claude 執行檔被防毒擋時，把 `pathToClaudeCodeExecutable` 填成 `C:\Users\<帳號>\node\node_modules\@anthropic-ai\claude-code\cli.js`。
 - 按鈕要加或改：編輯 `app\actions.json`（label、prompt、desc），重開 start.bat。

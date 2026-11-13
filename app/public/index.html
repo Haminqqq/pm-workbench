@@ -35,6 +35,7 @@ footer textarea{flex:1;font:inherit;padding:9px 12px;border:1px solid var(--line
 <header>
   <h1>PM 中台</h1>
   <div id="status"><span class="dot"></span>連線中…</div>
+  <label id="contWrap" style="font-size:13px;color:var(--mute)"><input type="checkbox" id="cont"> 接續上次對話</label>
   <select id="mode" title="權限模式">
     <option value="default">每個動作都問我</option>
     <option value="acceptEdits">改檔不用問，其他要問</option>
@@ -55,7 +56,7 @@ const $=s=>document.querySelector(s);const chat=$("#chat");let actions=[];let ai
 function add(cls,text){const d=document.createElement("div");d.className="msg "+cls;d.textContent=text;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;return d}
 function setStatus(on,busy,text){const dot=$("#status .dot");dot.className="dot"+(busy?" busy":on?" on":"");$("#status").lastChild.textContent=" "+text}
 async function post(u,b){const r=await fetch(u,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b||{})});if(!r.ok){const j=await r.json().catch(()=>({}));if(j.error)add("err",j.error)}return r.ok}
-function send(text){if(!text.trim())return;post("/api/run",{text});$("#inp").value=""}
+function send(text){if(!text.trim())return;post("/api/run",{text,continue:$("#cont").checked});$("#inp").value=""}
 $("#send").onclick=()=>send($("#inp").value);
 $("#inp").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send($("#inp").value)}});
 $("#stop").onclick=()=>post("/api/stop");
@@ -94,7 +95,7 @@ function handle(ev){
   case"ask":aiEl=null;renderAsk(ev);setStatus(true,false,"等妳回答");break;
   case"answered":{const c=chat.querySelector(`.card[data-rid="${ev.requestId}"]`);if(c)c.insertAdjacentHTML("beforeend",`<div style="margin-top:8px;color:var(--mute)">${esc(ev.text)}</div>`);setStatus(true,true,"Claude 工作中…");break}
   case"done":aiEl=null;add("sys",(ev.ok?"完成":"中止")+(ev.cost?`　（$${ev.cost.toFixed(3)}）`:"")+(ev.errors&&ev.errors.length?"　"+ev.errors.join("；"):""));setStatus(true,false,"就緒");break;
-  case"status":add("sys",ev.text);setStatus(ev.running!==false,ev.running,ev.text);break;
+  case"status":add("sys",ev.text);setStatus(ev.running!==false,ev.running,ev.text);if(ev.started){$("#cont").checked=false;$("#contWrap").style.display="none"}if(ev.running===false&&ev.text.includes("已停止"))$("#contWrap").style.display="";break;
   case"error":aiEl=null;add("err",ev.text);setStatus(false,false,"發生錯誤");break;
  }}
 function connect(){const es=new EventSource("/api/events");es.onmessage=e=>handle(JSON.parse(e.data));es.onerror=()=>{setStatus(false,false,"中台沒回應，確認 start.bat 的視窗還開著");es.close();setTimeout(connect,3000)}}
