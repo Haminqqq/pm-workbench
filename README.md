@@ -31,6 +31,15 @@ git clone https://github.com/<owner>/pm-workbench.git
 公司網路有 HTTPS 檢查時：`setx NODE_USE_SYSTEM_CA 1`（node、claude、npm 用 Windows 憑證）、`git config --global http.sslbackend schannel`；pip 加 `--trusted-host pypi.org --trusted-host files.pythonhosted.org`。
 裝 Claude Code：`npm install -g --allow-scripts=@anthropic-ai/claude-code @anthropic-ai/claude-code`；Python 套件：`python -m pip install openpyxl`。
 
+## 0c. PM 中台（按鈕介面，不用打終端機）
+雙擊 `app\start.bat`：第一次會裝套件（一兩分鐘），然後自動開 Edge 到 http://127.0.0.1:3737 。那個黑視窗要留著，關掉中台就停。
+- 左邊按鈕＝每天／CRD／料號／每週的固定任務，按下去就是跟本機 Claude 說那句話；下面輸入框可以直接打字。
+- Claude 要妳決定時會跳綠色卡片（選項＋其他），要跑指令或改檔時跳黃色卡片（允許／這次都允許／拒絕）。右上角可以切「每個動作都問我 / 改檔不用問 / 自動」。
+- 用的是同一個資料夾的 skill 和 CLAUDE.md，規則跟終端機版一樣：先摘要 → 提問 → 妳同意才做；不寄信、不貼 Teams、不覆蓋原檔。
+- 紀錄在 `app\log\<日期>.jsonl`。只綁 127.0.0.1，別台電腦連不到。
+- 進階：`app\config.json` 可改預設權限模式、不用問的工具清單、模型；SDK 自帶的 claude 執行檔被防毒擋時，把 `pathToClaudeCodeExecutable` 填成 `C:\Users\<帳號>\node\node_modules\@anthropic-ai\claude-code\cli.js`。
+- 按鈕要加或改：編輯 `app\actions.json`（label、prompt、desc），重開 start.bat。
+
 ## 1. 裝 Claude Code（不需要管理員權限）
 1. 下載 Node.js **可攜版 zip**（nodejs.org → Downloads → Windows Binary (.zip)），解壓到例如 `D:\tools\node\`。
 2. PowerShell 執行：

@@ -1,0 +1,8 @@
+{
+  "permissionMode": "default",
+  "alwaysAllow": ["Read", "Glob", "Grep", "LS", "TodoWrite", "TodoRead", "WebFetch", "WebSearch", "Skill", "ToolSearch"],
+  "model": "",
+  "pathToClaudeCodeExecutable": "",
+  "openRoots": [],
+  "systemAppend": "妳在「PM 中台」裡跟她對話：回覆繁體中文、短句；要她決定的事一律用 AskUserQuestion 問，不要用文字列選項；每個流程固定「先摘要 → 有問題先問 → 她同意才執行」；絕不寄信、不自動貼進 Teams、不覆蓋原檔。"
+}
