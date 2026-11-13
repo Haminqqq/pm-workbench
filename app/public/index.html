@@ -36,6 +36,12 @@ footer textarea{flex:1;font:inherit;padding:9px 12px;border:1px solid var(--line
   <h1>PM 中台</h1>
   <div id="status"><span class="dot"></span>連線中…</div>
   <label id="contWrap" style="font-size:13px;color:var(--mute)"><input type="checkbox" id="cont"> 接續上次對話</label>
+  <select id="model" title="模型">
+    <option value="claude-opus-5-5">Opus 5.5（日常）</option>
+    <option value="claude-sonnet-5-5">Sonnet 5.5（省）</option>
+    <option value="claude-fable-5-2">Fable 5.2（最強、最耗）</option>
+    <option value="">Claude Code 預設</option>
+  </select>
   <select id="mode" title="權限模式">
     <option value="default">每個動作都問我</option>
     <option value="acceptEdits">改檔不用問，其他要問</option>
@@ -61,6 +67,7 @@ $("#send").onclick=()=>send($("#inp").value);
 $("#inp").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send($("#inp").value)}});
 $("#stop").onclick=()=>post("/api/stop");
 $("#mode").onchange=e=>post("/api/mode",{mode:e.target.value});
+$("#model").onchange=e=>post("/api/model",{model:e.target.value});
 function renderSide(){const s=$("#side");s.innerHTML="";let g="";for(const a of actions){if(a.group!==g){g=a.group;const h=document.createElement("div");h.className="grp";h.textContent=g;s.appendChild(h)}
  const b=document.createElement("button");b.className="act";b.innerHTML=`<span class="ic">${a.icon||"•"}</span><span><b>${a.label}</b><small>${a.desc||""}</small></span>`;
  b.onclick=()=>{if(a.ask){const v=prompt(a.ask);if(v==null||!v.trim())return;send(a.prompt+v.trim())}else send(a.prompt)};s.appendChild(b)}}
@@ -87,7 +94,7 @@ function pretty(name,input){if(name==="Bash")return input.command||"";if(name===
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 function handle(ev){
  switch(ev.type){
-  case"hello":actions=ev.actions;renderSide();$("#mode").value=ev.state.mode;(ev.state.history||[]).forEach(h=>{if(h.type!=="ask"||h===ev.state.pending)handle(h)});setStatus(true,ev.state.running,ev.state.running?"Claude 工作中…":"就緒");break;
+  case"hello":actions=ev.actions;renderSide();$("#mode").value=ev.state.mode;$("#model").value=ev.state.model||"";(ev.state.history||[]).forEach(h=>{if(h.type!=="ask"||h===ev.state.pending)handle(h)});setStatus(true,ev.state.running,ev.state.running?"Claude 工作中…":"就緒");break;
   case"user":aiEl=null;add("me",ev.text);setStatus(true,true,"Claude 工作中…");break;
   case"delta":if(!aiEl)aiEl=add("ai","");aiEl.textContent+=ev.text;chat.scrollTop=chat.scrollHeight;break;
   case"assistant":if(aiEl){aiEl.textContent=ev.text;aiEl=null}else add("ai",ev.text);break;

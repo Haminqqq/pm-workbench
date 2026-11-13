@@ -19,7 +19,7 @@ function logLine(obj) { fs.appendFileSync(path.join(LOG_DIR, today() + ".jsonl")
 
 // ---------- 狀態 ----------
 const clients = new Set();                  // SSE
-const state = { running: false, sessionId: null, mode: CONFIG.permissionMode || "default", pending: null, history: [] };
+const state = { running: false, sessionId: null, mode: CONFIG.permissionMode || "default", model: CONFIG.model || "", pending: null, history: [] };
 const pendingResolvers = new Map();         // requestId -> resolve(PermissionResult)
 const alwaysAllow = new Set(CONFIG.alwaysAllow || ["Read", "Glob", "Grep", "LS", "TodoWrite", "TodoRead", "WebFetch", "WebSearch", "Skill", "ToolSearch"]);
 
@@ -87,7 +87,7 @@ async function ensureAgent(cont) {
     env: { ...process.env },
   };
   if (cont) options.continue = true;               // 接續這個資料夾最近一次對話（終端機或中台都算）
-  if (CONFIG.model) options.model = CONFIG.model;
+  if (state.model) options.model = state.model;
   if (CONFIG.pathToClaudeCodeExecutable) options.pathToClaudeCodeExecutable = CONFIG.pathToClaudeCodeExecutable;
   q = query({ prompt: userStream(), options });
   (async () => {
@@ -138,7 +138,7 @@ const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, "http://x");
   if (url.pathname === "/api/events") {
     res.writeHead(200, { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" });
-    res.write(`data: ${JSON.stringify({ type: "hello", actions: ACTIONS, state: { running: state.running, mode: state.mode, pending: state.pending, history: state.history.slice(-120) } })}\n\n`);
+    res.write(`data: ${JSON.stringify({ type: "hello", actions: ACTIONS, state: { running: state.running, mode: state.mode, model: state.model, pending: state.pending, history: state.history.slice(-120) } })}\n\n`);
     clients.add(res); req.on("close", () => clients.delete(res)); return;
   }
   if (url.pathname === "/api/run" && req.method === "POST") {
@@ -153,6 +153,11 @@ const server = http.createServer(async (req, res) => {
   }
   if (url.pathname === "/api/stop" && req.method === "POST") {
     if (q) { try { await q.interrupt(); } catch { } } emit({ type: "status", running: false, text: "已中斷" }); state.running = false; return json(res, 200, { ok: true });
+  }
+  if (url.pathname === "/api/model" && req.method === "POST") {
+    const b = await body(req); state.model = b.model || "";
+    if (q) { try { await q.setModel(state.model || undefined); } catch { } }
+    emit({ type: "status", running: state.running, text: `模型：${state.model || "Claude Code 預設"}` }); return json(res, 200, { ok: true });
   }
   if (url.pathname === "/api/mode" && req.method === "POST") {
     const b = await body(req); state.mode = b.mode || "default";
