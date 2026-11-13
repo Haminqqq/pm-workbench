@@ -1,0 +1,17 @@
+# 公司資料絕不進 repo
+mail/
+downloads/
+CRD/
+teams/shots/
+teams/log/
+teams/done/
+teams/notif.json
+teams/draft.txt
+teams/.seen
+*.xlsx
+*.xlsm
+*.png
+*.jpg
+*.eml
+*.msg
+__pycache__/
