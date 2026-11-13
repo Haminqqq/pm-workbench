@@ -1,7 +1,7 @@
 [
   {"id":"scan","group":"每天","label":"掃信","icon":"✉","prompt":"掃信","desc":"讀 Outlook 最近兩天的信，先給摘要，再問妳，妳說開始才寫草稿"},
   {"id":"teams","group":"每天","label":"看 Teams","icon":"💬","prompt":"看 Teams","desc":"讀 Teams 通知，列出誰找妳，分析後給草稿放剪貼簿"},
-  {"id":"zzz","group":"每天","label":"zzz 截圖","icon":"📷","prompt":"zzz","desc":"截目前的 Teams 視窗讀圖"},
+  {"id":"zzz","group":"每天","label":"截圖","icon":"📷","prompt":"截圖","desc":"截目前的 Teams 視窗讀圖、分析、給草稿"},
   {"id":"brief","group":"每天","label":"今天該做什麼","icon":"☀","prompt":"看待追清單和今天的例行事項，給我今天最急三件、誰在等我、我在等誰。只讀不寫。","desc":"從工作台待追清單整理今天的重點"},
   {"id":"crdstatus","group":"CRD","label":"CRD 狀態","icon":"📋","prompt":"CRD 狀態","desc":"每個專案目前版 CRD、Rev、有沒有被 Excel 開著"},
   {"id":"publish","group":"CRD","label":"上架","icon":"⬆","prompt":"上架：先列 CRD/out 裡等著上架的檔案，問我要上架哪一份，確認後才執行。","desc":"把改好的 CRD 換到專案資料夾，舊版自動進 old"},

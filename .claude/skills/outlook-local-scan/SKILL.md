@@ -28,7 +28,7 @@ description: "在她公司電腦的本機 Claude Code 裡，使用者說「掃�
 - 分類、寫入、回覆格式同 `outlook-daily-scan` 的「Teams 分享信」：`src:"teams"`、via「Teams｜<發言人> <M/D>」，回覆草稿寫成可直接貼回 Teams 的短句（放在對話裡，不進 Outlook 草稿匣）。
 - 「分享到 Outlook」寄給自己的單則訊息也照原規則處理。
 - **通知紀錄**：`teams/read_notifications.ps1 -Since 1440 -Out teams/notif.json` 讀 Windows 通知裡的 Teams 訊息（誰、聊天室、預覽），和信件一起進摘要表，「寄件人」欄寫「Teams｜<發言人>」。
-- **截**：她打「zzz」（或「截」）就跑 `teams/capture.ps1` 截 Teams 視窗再 Read 圖。Teams 的分析、草稿、剪貼簿流程照 `teams-local-scan`。
+- **截**：她說「截圖」就跑 `teams/capture.ps1` 截 Teams 視窗再 Read 圖。Teams 的分析、草稿、剪貼簿流程照 `teams-local-scan`。
 
 
 ### 料號與 EOL（階段 1 一起做）

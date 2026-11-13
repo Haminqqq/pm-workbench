@@ -80,8 +80,8 @@ git clone https://github.com/<owner>/pm-workbench.git
 
 ### 3b. 不用截圖貼上的方式（不需要 Cowork）
 - 在 `claude` 裡說 **「看 Teams」**：Claude 讀 Windows 通知紀錄，列出誰在 Teams 找你、說了什麼，對照待追清單後說明狀況、給草稿。
-- 要看完整對話：把 Teams 切到那個聊天室，在 `claude` 的終端機打 **`zzz`**，Claude 自己截 Teams 視窗讀圖。
-- 想用鍵盤快捷鍵：對 `teams\zzz.bat` 按右鍵 → 傳送到桌面建捷徑 → 捷徑右鍵內容 → 「快速鍵」填 Ctrl+Alt+Z。之後在 Teams 畫面按 Ctrl+Alt+Z 就截好了，回終端機打 `zzz` 讓 Claude 讀。
+- 要看完整對話：把 Teams 切到那個聊天室，說 **「截圖」**（中台有按鈕），Claude 自己截 Teams 視窗讀圖。
+- 想用鍵盤快捷鍵：對 `teams\zzz.bat` 按右鍵 → 傳送到桌面建捷徑 → 捷徑右鍵內容 → 「快速鍵」填 Ctrl+Alt+Z。之後在 Teams 畫面按 Ctrl+Alt+Z 就截好了，回中台按「截圖」讓 Claude 讀。
 - 草稿你說好之後會放進剪貼簿，到 Teams Ctrl+V、看一眼再 Enter。Claude 不會自己貼、不會送出。
 - 第一次先測：`teams\read_notifications.ps1 -Since 480` 有沒有列出今天的 Teams 通知；0 則就到 Windows 設定 → 系統 → 通知，確認 Teams 通知開著。
 - 背景守望（可選）：雙擊 `teams\run_watch.bat`，每 10 分鐘看一次；`teams\watch_list.txt` 一行一個名字（預設 Yuna、Jaclyn），名單內的人有新訊息就跳 Windows 通知＋草稿進剪貼簿，分析存 `teams\log\`。關掉視窗就停。
