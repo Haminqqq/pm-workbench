@@ -20,6 +20,17 @@ git clone https://github.com/<owner>/pm-workbench.git
 掃信、看 Teams、查料號、CRD 合併這些 skill 都在 `.claude/skills/`，跟著 pull 一起更新，不用再上傳。
 沒有 git 的話（公司擋安裝檔）：第一次 GitHub 頁面 Code → Download ZIP，解壓到 `C:\Users\<帳號>\pm-workbench`（把裡面那層 `pm-workbench-main` 的內容搬上來）。之後更新：再 Download ZIP 一次（留在「下載」），雙擊資料夾裡的 `update.bat` 就會自動覆蓋。
 
+## 0b. 公司電腦擋安裝檔時（全部用 zip 免安裝版）
+| 需要 | 下載 | 解壓到 | 加進 PATH |
+|---|---|---|---|
+| Node（跑 Claude Code） | nodejs.org → Windows Standalone Binary (.zip) | `C:\Users\<帳號>\node-vXX` | 那個資料夾 |
+| Git（選用，`git pull` 更新） | git-for-windows releases → PortableGit 7z.exe（擋的話跳過，用 update.bat） | `C:\Users\<帳號>\PortableGit` | `...\PortableGit\cmd` |
+| Python（CRD 腳本） | https://www.nuget.org/api/v2/package/python/3.12.10 → 把 .nupkg 改名 .zip | `C:\Users\<帳號>\python` | `...\python\tools` 和 `...\python\tools\Scripts` |
+
+加 PATH 用 `setx PATH "%PATH%;<路徑1>;<路徑2>"`，然後**關掉命令提示字元重開**才生效。
+公司網路有 HTTPS 檢查時：`setx NODE_USE_SYSTEM_CA 1`（node、claude、npm 用 Windows 憑證）、`git config --global http.sslbackend schannel`；pip 加 `--trusted-host pypi.org --trusted-host files.pythonhosted.org`。
+裝 Claude Code：`npm install -g --allow-scripts=@anthropic-ai/claude-code @anthropic-ai/claude-code`；Python 套件：`python -m pip install openpyxl`。
+
 ## 1. 裝 Claude Code（不需要管理員權限）
 1. 下載 Node.js **可攜版 zip**（nodejs.org → Downloads → Windows Binary (.zip)），解壓到例如 `D:\tools\node\`。
 2. PowerShell 執行：
