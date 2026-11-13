@@ -65,6 +65,23 @@ git clone https://github.com/<owner>/pm-workbench.git
 - 第一次先測：`teams\read_notifications.ps1 -Since 480` 有沒有列出今天的 Teams 通知；0 則就到 Windows 設定 → 系統 → 通知，確認 Teams 通知開著。
 - 背景守望（可選）：雙擊 `teams\run_watch.bat`，每 10 分鐘看一次；`teams\watch_list.txt` 一行一個名字（預設 Yuna、Jaclyn），名單內的人有新訊息就跳 Windows 通知＋草稿進剪貼簿，分析存 `teams\log\`。關掉視窗就停。
 
+## 3c. CRD 怎麼放（版本管理）
+```
+CRD_DIR\                 ← CLAUDE.md 裡的路徑
+  XIO Gen10.3\
+    M1441179_XIO.xlsx     ← 目前版，檔名固定不帶 Rev
+    CHANGELOG.md          ← 每次上架自動記一行
+    old\
+      M1441179_XIO_RevE_20261113.xlsx   ← 舊版自動搬進來
+  Xstore Gen10.7\
+    …
+```
+- Claude 改完 CRD 會先放在 `CRD\out\<專案>\`，給你摘要。你說 **「上架」**，它才把舊版搬到 `old\`、新檔換上去、CHANGELOG 記一行。原檔永遠不會被直接覆蓋。
+- Excel 還開著那份時會被擋下來，提示你關掉再說一次「上架」。
+- **「CRD 狀態」**：列每個專案目前版的 Rev、時間、有沒有被 Excel 開著、有沒有等著上架的檔。
+- **「回復」**：把 old\ 裡最新一份換回來。
+- `old\` 太多可以自己刪，不影響任何功能。
+
 ## 4. 排程（可選）
 工作排程器 → 建立基本工作 → 每天 08:30 → 動作「啟動程式」：
 - 程式：`D:\tools\npm\claude.cmd`

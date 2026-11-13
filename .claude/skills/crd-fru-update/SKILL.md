@@ -81,9 +81,21 @@ description: "使用者上傳 MSFT 專案的廣達版 CRD 並要更新 FRU 分�
 - 有標「Confirmed with MTE」之類的列，代表這張表跟 MTE 對過，新增前要提醒使用者這一點；但使用者說先加就直接加。
 
 ## 交付
-- 輸出檔名：`<原檔名>_FRU更新.xlsx`，用 SendUserFile 傳給使用者。
+- 雲端對話：輸出檔名 `<原檔名>_FRU更新.xlsx`，用 SendUserFile 傳給使用者。
+- 本機（pm-workbench）：檔名用原檔名，照下面「本機交付方式」上架。
 - 回覆分段簡短說明：每個分頁加了什麼、哪些值跟範本不同、L6 比對結果、FW 表要不要改、還需要找誰確認（例如 VRC ID）。
 - 最後一行提醒：這次的內容還沒寫進追蹤頁或 Notion，要記錄的話再跟我說。
+
+
+### 本機（pm-workbench）交付方式
+在她公司電腦的 Claude Code 裡不用 SendUserFile：
+1. 先 `python crd_release.py --status` 找該專案目前版（有 ⚠ 多份或找不到就問她，不猜）。
+2. 產出寫到 `CRD/out/<專案>/<原檔名>`（檔名跟目前版一模一樣，Rev 寫進 change history）。
+3. 給她摘要，等她說「上架」→ `python crd_release.py --publish --project "<專案>" --new "CRD/out/<專案>/<原檔名>" --rev <新Rev> --note "<一句話＋來源信>"`。
+   - 腳本會把舊版搬到 `old/<原檔名>_Rev<舊>_<日期>.xlsx`、新檔放回原位、CHANGELOG 記一行。
+   - 印出「請先關閉 Excel 裡的 …」（exit 2）→ 告訴她關掉 Excel 再說一次「上架」，不要自己 retry 覆蓋。
+4. release 信的附件用上架後專案資料夾裡那份。
+5. 她說「回復」→ `python crd_release.py --rollback --project "<專案>"`。
 
 ## 回寫 mapping（交付後一定做）
 合併或更新完的 CRD 裡的 MSPN–QPN 對照要回寫到 MSPN–QPN Mapping 工具（https://claude.ai/artifact/Pk7jBE6rQJxjhCy6sKEy1H ），之後查料號、EOL 分析才查得到。

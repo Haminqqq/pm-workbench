@@ -50,9 +50,9 @@ description: "在她公司電腦的本機 Claude Code 裡，使用者說「掃�
 
 **C. CRD 更新**
 1. 附件先存到 `downloads/<日期>/`：`read_mail.ps1 -SaveAttachments downloads/<日期>` 會一起存。
-2. 廣達版目前版從 `CRD_DIR/<專案>/` 找：檔名符合該專案 CRD 編號、修改時間最新的那份。**找不到或有兩份以上都像最新 → 列出來問她，不要猜。**
-3. 走 `crd-fw-merge`／`crd-fru-update`。新檔存同資料夾，檔名照她現行命名（原檔名；Rev 寫進 change history），原檔不動、不覆蓋；同名衝突時加 `_new` 並在回覆裡說明。
-4. release 信草稿：照她上次 release 信格式（沒有範本 → 請她指一封舊信的 EntryID 或貼內容），用 A 的方式建草稿並 `-Attach` 新檔。
+2. 廣達版目前版用 `python crd_release.py --status` 找（專案資料夾只放目前版，舊版在 `old/`）。**找不到或有兩份 → 列出來問她，不要猜。**
+3. 走 `crd-fw-merge`／`crd-fru-update`：產出到 `CRD/out/<專案>/<原檔名>`，她說「上架」才 `crd_release.py --publish`（舊版自動進 old/、CHANGELOG 記一行）；Excel 開著會被擋，請她關掉再說一次。
+4. release 信草稿（附件＝上架後專案資料夾那份）：照她上次 release 信格式（沒有範本 → 請她指一封舊信的 EntryID 或貼內容），用 A 的方式建草稿並 `-Attach` 新檔。
 5. 待追清單加一張卡。
 
 **D. PjE 換料、E. ECO 通知、F. brief**：同 `outlook-daily-scan`。

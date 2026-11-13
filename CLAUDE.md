@@ -4,13 +4,13 @@ CRD_DIR = D:\CRD        ← 改成真實路徑；底下每個專案一個子資�
 雲端工作台：https://claude.ai/artifact/UfnLZCVTgfNf13vcuTkkT5（待追清單 collection `items`、首頁資料 collection `home`）
 
 ## 資料夾
-- `CRD_DIR/<專案>/`：既有檔案**只讀**；產出一律新檔放同資料夾，檔名照原檔、Rev 進 change history，同名就加 `_new` 並說明。
+- `CRD_DIR/<專案>/`：只放**目前版**（檔名維持她現行命名）；舊版在 `old/<原檔名>_Rev<X>_<日期>.xlsx`；每個專案一個 `CHANGELOG.md`。既有檔案**只讀**，產出先寫 `CRD/out/<專案>/<原檔名>`，她說「上架」才用 `python crd_release.py --publish` 換上去（腳本會先備份舊版）。被 Excel 開著會停，請她關掉再試。「CRD 狀態」＝`crd_release.py --status`；「回復」＝`--rollback`。
 - `downloads/<日期>/`：信件附件。`teams/`：她貼的 Teams 對話 txt 或截圖，處理完搬到 `teams/done/`。`mail/`：掃信中間檔。`outlook/`：PowerShell 腳本。 `teams/*.ps1`：Teams 通知讀取、截圖、剪貼簿；`teams/shots/` 截圖、`teams/log/` 背景分析。
 - 讀外部檔案用 `python3 -I`。
 
 ## 流程
 - 掃信 → skill `outlook-local-scan`（讀信用 `outlook/read_mail.ps1`、草稿用 `outlook/make_draft.ps1`、標記用 `outlook/mark_done.ps1`）。固定三段：摘要 → 提問 → 她說「開始」才執行。
-- CRD → `crd-fw-merge`（FW-SW 頁）、`crd-fru-update`（FRU 分頁）；腳本 `merge_crd_fw.py`。
+- CRD → `crd-fw-merge`（FW-SW 頁）、`crd-fru-update`（FRU 分頁）；腳本 `merge_crd_fw.py`、`crd_import.py`（回寫 mapping）、`crd_release.py`（上架／狀態／回復）。
 - 週報 → `weekly-project-status-report`。
 
 ## 安全規則（最高優先）

@@ -28,9 +28,20 @@ description: "比對廣達版舊 CRD 與客人新版 CRD 的 FW-SW 頁，沿用�
 ## 步驟
 1. 把下方腳本存成 `merge_crd_fw.py`。
 2. 執行：`python3 -I merge_crd_fw.py 舊.xlsx 新.xlsx 輸出.xlsx [--old-sheet 頁名] [--new-sheet 頁名]`。不指定頁名時，舊版取有 VRCID 欄的 FW-SW 頁、新版取沒有的。同一檔有兩頁時（例如 `FW-SW Configuration-K` 與 `-N`）要用參數指定。
-3. 用 SendUserFile 交付輸出檔，回覆簡短摘要：改版幾列、新增幾列、哪些要 BMC 補 VRCID、哪些 VRCID 空白。
+3. 交付：雲端對話用 SendUserFile；本機（pm-workbench）照下面「本機交付方式」。回覆簡短摘要：改版幾列、新增幾列、哪些要 BMC 補 VRCID、哪些 VRCID 空白。
 4. 工作紀錄：依專案規則把結果寫進追蹤頁與 Notion。
 5. 若比對出新舊 FW 完全相同，直接說明沒有差異，不要硬標黃。
+
+
+### 本機（pm-workbench）交付方式
+在她公司電腦的 Claude Code 裡不用 SendUserFile：
+1. 先 `python crd_release.py --status` 找該專案目前版（有 ⚠ 多份或找不到就問她，不猜）。
+2. 產出寫到 `CRD/out/<專案>/<原檔名>`（檔名跟目前版一模一樣，Rev 寫進 change history）。
+3. 給她摘要，等她說「上架」→ `python crd_release.py --publish --project "<專案>" --new "CRD/out/<專案>/<原檔名>" --rev <新Rev> --note "<一句話＋來源信>"`。
+   - 腳本會把舊版搬到 `old/<原檔名>_Rev<舊>_<日期>.xlsx`、新檔放回原位、CHANGELOG 記一行。
+   - 印出「請先關閉 Excel 裡的 …」（exit 2）→ 告訴她關掉 Excel 再說一次「上架」，不要自己 retry 覆蓋。
+4. release 信的附件用上架後專案資料夾裡那份。
+5. 她說「回復」→ `python crd_release.py --rollback --project "<專案>"`。
 
 ## 回寫 mapping（交付後一定做）
 合併或更新完的 CRD 裡的 MSPN–QPN 對照要回寫到 MSPN–QPN Mapping 工具（https://claude.ai/artifact/Pk7jBE6rQJxjhCy6sKEy1H ），之後查料號、EOL 分析才查得到。
