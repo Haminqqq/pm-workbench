@@ -12,6 +12,7 @@ CRD_DIR = C:\Users\11508141\OneDrive - Quanta Computer\桌面        ← 放所�
 - 掃信 → skill `outlook-local-scan`（讀信用 `outlook/read_mail.ps1`、草稿用 `outlook/make_draft.ps1`、標記用 `outlook/mark_done.ps1`）。固定三段：摘要 → 提問 → 她說「開始」才執行。
 - CRD → `crd-fw-merge`（FW-SW 頁）、`crd-fru-update`（FRU 分頁）；腳本 `merge_crd_fw.py`、`crd_import.py`（回寫 mapping）、`crd_release.py`（上架／狀態／回復）。
 - 週報 → `weekly-project-status-report`。
+- 「同步 mapping」→ `mspn-qpn-lookup` 的「同步 mapping」段：本機 CRD 補進 MSPN–QPN 工具（用 `crd_import.py`）。「查料號」「EOL 換料」也走同一個 skill。
 
 ## 安全規則（最高優先）
 1. **絕不呼叫 Outlook 的 `Send()`**，不修改 `outlook/*.ps1` 加入寄送；回信只建草稿。不轉寄、不刪信、不改已讀、不移動資料夾。

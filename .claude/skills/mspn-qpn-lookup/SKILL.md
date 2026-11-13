@@ -69,3 +69,18 @@ description: "查料號：使用者給 MSPN（M1xxxxxx-001）、QPN（11 碼）�
 - 不改 `base/*`（那是內建資料快照）。要新增對照一律寫 `imports`（照 crd-fw-merge／crd-fru-update 的「回寫 mapping」步驟）。
 - 寫 `eolruns`、`flags` 前先把結果給她看一眼；她說好再寫。
 - 回覆繁體中文；料號、Rev 原樣照抄，不確定寫 [待確認]。
+
+## 同步 mapping（她說「同步 mapping」「把本機 CRD 補進 mapping」；只在 pm-workbench 本機用）
+把本機每個專案的目前版 CRD 補進工具的 `imports`，之後查料號、EOL 分析才查得到。
+1. `python crd_release.py --status` 取得每個專案的目前版檔案與 Rev。
+2. ArtifactData `list` `imports`（limit 50）→ 整理成「doc（M 編號）→ 已匯入的 rev／ver／at」。
+3. 比對：本機 CRD 的 doc＋Rev 已在 imports 裡 → 跳過；沒有、或本機 Rev 較新、或檔名裡的版本（V0.16 這種）比已匯入的新 → 列入待同步。先把待同步清單給她看（專案、檔名、Rev、工具裡最新匯入的是哪版），她確認再做。
+4. 每份待同步 CRD：
+   - 先用 `python crd_release.py --status` 之外的方式讀檔名裡的 project 標籤；`--project` 用工具既有寫法（例如 `S2185 Xstore Gen9.4/T6Y`，從 `base/map-*` 同專案列的第 4 欄抄）。
+   - 準備 `known.json`：讀這份 CRD 出現的 MSPN 前綴對應的 `base/map-*` 桶（通常 ≤15 桶）＋全部 imports 的 map，寫成 `{"pairs":[["MSPN","QPN"],…]}`。
+   - `python crd_import.py "<CRD 路徑>" --name "<專案>" --project "<標籤>" --rev <Rev> --known known.json --out imports_<doc>.json`。
+   - 把 `summary` 給她：新增對照 N 筆、⚠ N 筆（QPN 已對應其他 MSPN）、QPN TBD N 筆。
+5. 她確認後，`docs[]` 每份 ArtifactData `set` 到 `imports/<imp>`（doc_id 用 json 裡的 `imp`，分 part 時 `<imp>~<part>`）。同 doc＋rev＋ver 已存在就只補缺的組合（update 該文件的 map／crd 陣列）。
+6. 回覆：每份 CRD 一行「<專案> <Rev>：mapping 新增 N 筆、TBD N 筆（已記為待申請）」。TBD 的料號另列一張「申請 QPN」清單，問她要不要建待追卡。
+
+規則：`base/*` 不改；寫入前一定先給她看摘要；一次最多同步 10 份，超過先問。
